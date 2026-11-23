@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "fyug": {
+      "type": "http",
+      "url": "https://mcp.fyug.fm/mcp"
+    }
+  }
+}

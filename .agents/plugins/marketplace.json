@@ -1,0 +1,20 @@
+{
+  "name": "fyug",
+  "interface": {
+    "displayName": "Fyug"
+  },
+  "plugins": [
+    {
+      "name": "fyug",
+      "source": {
+        "source": "local",
+        "path": "./plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "fyug",
+  "version": "2026.11.2",
+  "description": "Compose and play generative music with Fyug: skills for writing, playing and reviewing a piece, with a hosted server that checks it and plays it in an in-chat player.",
+  "author": {
+    "name": "Ilusiv Media",
+    "url": "https://fyug.fm"
+  },
+  "homepage": "https://fyug.fm",
+  "repository": "https://github.com/Ilusiv-media/fyug",
+  "license": "MIT",
+  "keywords": [
+    "music",
+    "composition",
+    "generative-music",
+    "synthesis",
+    "audio"
+  ]
+}

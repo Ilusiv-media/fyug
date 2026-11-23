@@ -1,0 +1,27 @@
+{
+  "name": "fyug",
+  "owner": {
+    "name": "Ilusiv Media",
+    "url": "https://fyug.fm"
+  },
+  "metadata": {
+    "description": "Fyug, a tool for composing and playing generative music with an agent."
+  },
+  "plugins": [
+    {
+      "name": "fyug",
+      "source": "./plugin",
+      "description": "Compose and play generative music with Fyug: skills for writing, playing and reviewing a piece, with a hosted server that checks it and plays it in an in-chat player.",
+      "version": "2026.11.2",
+      "homepage": "https://fyug.fm",
+      "license": "MIT",
+      "keywords": [
+        "music",
+        "composition",
+        "generative-music",
+        "synthesis",
+        "audio"
+      ]
+    }
+  ]
+}
