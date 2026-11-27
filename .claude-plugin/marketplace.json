@@ -12,7 +12,7 @@
       "name": "fyug",
       "source": "./plugin",
       "description": "Compose and play generative music with Fyug: skills for writing, playing and reviewing a piece, with a hosted server that checks it and plays it in an in-chat player.",
-      "version": "2026.11.3",
+      "version": "2026.11.6",
       "homepage": "https://fyug.fm",
       "license": "MIT",
       "keywords": [

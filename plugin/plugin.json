@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "fyug",
-  "version": "2026.11.3",
+  "version": "2026.11.6",
   "description": "Compose and play generative music with Fyug: skills for writing, playing and reviewing a piece, with a hosted server that checks it and plays it in an in-chat player.",
   "author": {
     "name": "Ilusiv Media",

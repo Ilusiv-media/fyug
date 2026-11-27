@@ -27,7 +27,8 @@ load, reload, swap or removal.
 
 For a new piece, write one complete invention document (version, modules with
 supported configs, connections) and load it with load_invention. A document's
-modules use id, type and config; add_module takes id, module_type and config.
+modules use id, type and config; an apply_edits add_module edit takes id,
+module_type and config.
 Put intended starting values in config instead of setting each in a separate
 call, and check them with describe_module.
 
@@ -60,12 +61,12 @@ the ref unchanged to load_invention to start one.
 
 For a structural edit, retrieve the current document with get_invention, make
 the intended change to the complete document, and send it with
-reload_invention. Never reconstruct a document from list_modules or
-list_connections. Pass the snapshot's source_path and revision as
-expected_revision: a stale revision is refused, so retrieve again and rebase
-the edit. A reload without expected_revision is unconditional. A snapshot is
-a point in time, not a synchronized copy. reload_invention has no ref:
-references name catalog content, not documents to edit.
+reload_invention. Never rebuild a document from the running graph. Pass the
+snapshot's source_path and revision as expected_revision: a stale revision is
+refused, so retrieve again and rebase the edit. A reload without
+expected_revision is unconditional. A snapshot is a point in time, not a
+synchronized copy. reload_invention has no ref: references name catalog
+content, not documents to edit.
 
 ## Reload keeps what did not change
 
@@ -77,14 +78,16 @@ restarts state, happens only when nothing is running.
 
 ## Targeted edits to large inventions
 
-When resending the whole document costs more than the change (a new voice
-wired into a mixer, a filter inserted into a chain, several starting values
-retuned together), use apply_edits: its edits apply in order, and the batch
-commits whole, in one revision, or not at all. A control write that does not
-take after the batch commits is listed in controls_failed: repair only those
-against the new revision rather than resending the batch. Chain each call on
-the previous result's revision. reload_invention stays the default when you
-hold the document.
+On both hosts, the local tools and the hosted in-chat player alike (once it
+offers its tools), change a playing piece's structure with apply_edits (a new
+voice wired into a mixer, a filter inserted into a chain) and its values with
+set_controls; the player policy says which edits the player takes. Its edits
+apply in order, and the batch commits whole, in one revision, or not at all.
+A control write that does not take after the batch commits is listed in
+controls_failed: repair only those against the new revision rather than
+resending the batch. Chain each call on the previous result's revision. On
+the local tools, reload_invention stays the default when you hold the whole
+document and are rewriting it.
 
 ## Read before retrying
 
@@ -99,17 +102,19 @@ retrying. Live gestures are never resent.
 ## Conduct with set_controls
 
 Read live keys and ranges first (list_controls). Use set_controls for a
-gesture that moves several controls and set_control for one. A batch runs in
-order without rollback: earlier writes stay if a later one fails. Each write's
+gesture that moves several controls and set_control for one. A batch is all
+or none: if any write is refused, nothing is written and the error names that
+write's index and reason. A number past a control's range is set to the
+nearer limit and reported clamped. Each write's
 ack is applied (with its value) or pending (with a request that
 control_changed names when it applies, and list_pending_requests lists until
 then). intent "perform" plays a value without saving it into the document.
 
 ## Land changes on the beat
 
-Pass when, such as {"kind":"next_bar"}, to land a control write, swap_module,
-apply_edits or reload_invention in musical time, and give it ttl_ms to let
-it expire instead of landing late. Nothing changes until it lands. A timed
+Pass when, such as {"kind":"next_bar"}, to land a control write, apply_edits
+or reload_invention in musical time, and give it ttl_ms to let it expire
+instead of landing late. Nothing changes until it lands. A timed
 edit returns a request: follow it with get_request or poll_events
 (request_changed). A timed control write's ack is pending with its landing,
 the control reads its old value until then, and a control_request_settled
@@ -126,17 +131,21 @@ edit.
 
 ## Surgical tools for surgical changes
 
-Keep add_module (with full supported config), remove_module, swap_module,
-connect and disconnect for small changes. create_invention makes an empty
-canvas with a DAC. stop_invention unloads the piece; pause_invention silences
-it with position and values held, and edits still apply, until
+apply_edits is the tool for any surgical change, in a large piece or a small
+one: a module added (with full supported config) or removed, a connection
+made or broken. Its swap_module edit replaces one module's type in place,
+keeping the connections the new type has ports for. To read the structure,
+inspect_invention's overview lists the modules and its value selection at
+/connections lists the connections. create_invention makes an empty canvas
+with a DAC. stop_invention unloads the piece; pause_invention
+silences it with position and values held, and edits still apply, until
 resume_invention. save_invention writes the document, references intact, on
 the daemon's filesystem.
 
 ## Listen to the result
 
-Check what plays with get_meters (peak and RMS levels) or show_scope (one
-module's waveform).
+Check what plays with get_meters (peak and RMS levels) or show_view's scope
+(one module's waveform).
 
 ## The person plays too
 
@@ -158,6 +167,19 @@ install_package installs one, with its dependencies, from a local directory,
 GitHub or a registry. Installed versions never change: an identical repeat
 reports already_installed, and other bytes under the same version fail with
 integrity_mismatch.
+
+## Scripts
+
+In the hosted in-chat player a piece's scripts run, in a sandbox with no
+network access: read load_invention's runs_in_player for the ones it runs
+rather than assuming. On the hosted server an agent module does not run, nor
+does a script inside a development: load_invention names them under not_run.
+What a script changes while it runs is not in the saved, shared or
+downloaded piece, nor in get_invention. A script cannot add a script or
+agent module. A script has 5 s to start and 1 s per tick (each hook), and
+one that overruns or throws is stopped until the piece is loaded again. A
+script's additions count toward the piece's 64 KiB; past it they are
+refused, and so are your own adds until the piece is loaded again.
 
 ## MCP transport
 
